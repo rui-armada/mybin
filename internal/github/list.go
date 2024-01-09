@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/google/go-github/v38/github"
 	"golang.org/x/oauth2"
@@ -10,7 +11,7 @@ import (
 
 func ListRepos() error {
 	// Retrieve the GitHub personal access token from an environment variable
-	token := "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"
+	token := os.Getenv("github_token")
 	if token == "" {
 		return fmt.Errorf("GitHub token not found")
 	}
