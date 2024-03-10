@@ -1,10 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
-	"github.com/yourusername/github-cli/internal/github"
+	"github.com/rui-armada/mybin/internal/git"
+)
+
+var (
+	gitProvider git.GitProvider
+	ctx         context.Context
 )
 
 func main() {
@@ -12,10 +18,17 @@ func main() {
 
 	if len(args) < 2 {
 		fmt.Println("Usage: mybin.exe <command> ...")
-		return
+		return // fail
 	}
 
+	var err error
 	command := args[1]
+	ctx = context.Background()
+	gitProvider, err = git.NewGithubProvider(ctx)
+	if err != nil {
+		fmt.Println("Failed to create GitHub provider: ", err)
+		return // fail
+	}
 
 	switch command {
 	case "create":
@@ -37,7 +50,7 @@ func handleCreate(args []string) {
 
 	repoName := args[3]
 
-	err := github.CreateRepo(repoName)
+	err := gitProvider.CreateRepo(ctx, repoName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -53,7 +66,7 @@ func handleDelete(args []string) {
 	repoName := args[3]
 	groupName := args[5]
 
-	err := github.DeleteRepo(repoName, groupName)
+	err := gitProvider.DeleteRepo(ctx, repoName, groupName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -61,7 +74,7 @@ func handleDelete(args []string) {
 }
 
 func handleList() {
-	err := github.ListRepos()
+	err := gitProvider.ListRepos(ctx)
 	if err != nil {
 		fmt.Println(err)
 		return
