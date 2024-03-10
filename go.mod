@@ -1,4 +1,4 @@
-module github.com/yourusername/github-cli
+module github.com/rui-armada/mybin
 
 go 1.20
 
